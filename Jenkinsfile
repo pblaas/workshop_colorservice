@@ -45,8 +45,9 @@ podTemplate(label: 'mypod', containers: [
 }
 node{
   stage('Deploy to cluster'){
+    sh("env")
     sh("if [ ! -e kubectl ]; then wget -q https://storage.googleapis.com/kubernetes-release/release/v1.9.3/bin/linux/amd64/kubectl && chmod +x kubectl; fi")
-    sh("if [ ! -v ${env.APIPORT} ]; then APIPORT=${env.APIPORT} else APIPORT=443; fi")
+    #sh("if [ ! -v ${env.APIPORT} ]; then APIPORT=${env.APIPORT} else APIPORT=443; fi")
     sh("./kubectl config set-credentials jenkins-build --token=`cat /var/run/secrets/kubernetes.io/serviceaccount/token`")
     sh("./kubectl config set-cluster internal1 --server=https://10.3.0.1:${APIPORT} --certificate-authority=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt")
     sh("./kubectl config set-context default --user=jenkins-build --namespace=`cat /var/run/secrets/kubernetes.io/serviceaccount/namespace`  --cluster=internal1")
